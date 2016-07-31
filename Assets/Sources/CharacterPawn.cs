@@ -3,8 +3,9 @@ using System.Collections;
 
 public class CharacterPawn : MonoBehaviour 
 {
-	[SerializeField] private float _maxSpeed = 10f;                    // The fastest the player can travel in the x axis.
-	private bool _facingRight = true;  // For determining which way the player is currently facing.
+	[SerializeField] private float _maxSpeed = 10f; // The fastest the player can travel in the x axis.
+	[SerializeField] private float _jumpForce = 50f; // The fastest the player can travel in the x axis.
+	private bool _facingRight = true;               // For determining which way the player is currently facing.
 
 	[SerializeField]
 	private Animator _anim;            // Reference to the player's animator component.
@@ -20,14 +21,16 @@ public class CharacterPawn : MonoBehaviour
 		_currentSpeed = new Vector3();
 	}
 
-	public void Move(Vector2 move)
+	public void Move(InputStruct input)
 	{
+		Vector2 move = new Vector2 (input.deltaX, 0);
+
 		// The Speed animator parameter is set to the absolute value of the horizontal input.
 		_anim.SetFloat("Speed", Mathf.Abs(move.x) + Mathf.Abs(move.y));
 
 		// Move the character
 		_currentSpeed.x = move.x * _maxSpeed;
-		_currentSpeed.y = move.y * _maxSpeed;
+		_currentSpeed.y = _rigidbody.velocity.y;
 
 		_rigidbody.velocity = _currentSpeed;
 
@@ -42,6 +45,16 @@ public class CharacterPawn : MonoBehaviour
 		{
 			// ... flip the player.
 			Flip();
+		}
+
+		if (input.jumping) {
+			Jump ();
+		}
+	}
+
+	public void Jump() {
+		if (_rigidbody.velocity.y == 0) {
+			_rigidbody.AddForce (0, _jumpForce, 0, ForceMode.Impulse);
 		}
 	}
 
@@ -60,5 +73,4 @@ public class CharacterPawn : MonoBehaviour
 		theScale.x *= -1;
 		_anim.transform.localScale = theScale;
 	}
-
 }

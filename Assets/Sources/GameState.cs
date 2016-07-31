@@ -3,11 +3,13 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 
+using InputHistory = System.Collections.Generic.Dictionary<int, InputStruct>;
+
 public class GameState : MonoBehaviour 
 {
-	private List<Dictionary<int, Vector2>> _recordedInput;
+	private List<InputHistory> _recordedInput;
 
-	private Dictionary<int, Vector2> _currentInput;
+	private InputHistory _currentInput;
 
 	private int _currentRecordIndex;
 
@@ -15,7 +17,7 @@ public class GameState : MonoBehaviour
 	{
 		_currentRecordIndex = 0;
 
-		_recordedInput = new List<Dictionary<int, Vector2>>();
+		_recordedInput = new List<InputHistory>();
 
 		AddNewRecord();
 	}
@@ -50,19 +52,16 @@ public class GameState : MonoBehaviour
 
 	private void AddNewRecord()
 	{
-		_currentInput = new Dictionary<int, Vector2>();
+		_currentInput = new InputHistory();
 		_recordedInput.Add(_currentInput);
 	}
 
-	public void RegisterUserAxisInput(Vector2 pInput)
+	public void RegisterUserInput(InputStruct input)
 	{
-		if(pInput.sqrMagnitude > 0.0f)
-		{
-			_currentInput.Add(FrameCounter.currentFrame, pInput);
-		}
+		_currentInput.Add(FrameCounter.currentFrame, input);
 	}
 
-	public List<Dictionary<int, Vector2>> GetRecordedInput()
+	public List<InputHistory> GetRecordedInput()
 	{
 		return _recordedInput;
 	}

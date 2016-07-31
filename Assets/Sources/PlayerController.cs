@@ -3,22 +3,22 @@ using System.Collections;
 using UnityStandardAssets.CrossPlatformInput;
 using System;
 
-public class PlayerController : MonoBehaviour 
+public class PlayerController : MonoBehaviour
 {
 	[SerializeField]
 	private CharacterPawn _pawn;
 
-	public delegate void OnUserAxisInput(Vector2 input);
+	public delegate void OnUserAxisInput(InputStruct input);
 	public event OnUserAxisInput onUserAxisInput;
 
 	public delegate void OnFinishPressed(bool isNext);
 	public event OnFinishPressed onFinishPressed;
 
-	private Vector2 _input;
+	private InputStruct _inputStruct;
 
 	private void Start() 
 	{
-		_input = new Vector2();
+		_inputStruct = new InputStruct(false, 0);
 	}
 
 	private void Update()
@@ -41,12 +41,27 @@ public class PlayerController : MonoBehaviour
 	private void FixedUpdate()
 	{
 		// Read the inputs.
-		_input.x = CrossPlatformInputManager.GetAxis("Horizontal");
-		_input.y = CrossPlatformInputManager.GetAxis("Vertical");
+		readInputStruct();
 
-		// Pass all parameters to the character control script.
-		_pawn.Move(_input);
+		if (_inputStruct != null) {
+			// Pass all parameters to the character control script.
+			_pawn.Move (_inputStruct);
+			onUserAxisInput (_inputStruct);
+		}
+	}
 
-		onUserAxisInput(_input);
+	private void readInputStruct() {
+		float x = CrossPlatformInputManager.GetAxis("Horizontal");
+		bool jumping = isJumping ();
+
+		if (Math.Abs (x) > 0 || jumping) {
+			_inputStruct = new InputStruct (jumping, x);
+		} else {
+			_inputStruct = null;
+		}
+	}
+
+	private bool isJumping() {
+		return CrossPlatformInputManager.GetButtonDown ("Jump");
 	}
 }

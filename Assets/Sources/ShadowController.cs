@@ -2,14 +2,16 @@
 using System.Collections;
 using System.Collections.Generic;
 
+using InputHistory = System.Collections.Generic.Dictionary<int, InputStruct>;
+
 public class ShadowController : MonoBehaviour 
 {
 	[SerializeField]
 	private CharacterPawn _pawn;
 
-	private Dictionary<int, Vector2> _inputs;
+	private InputHistory _inputs;
 
-	public void Init(Dictionary<int, Vector2> pInputs)
+	public void Init(InputHistory pInputs)
 	{
 		_inputs = pInputs;
 	}
@@ -21,7 +23,7 @@ public class ShadowController : MonoBehaviour
 			return;
 		}
 
-		Vector2 input = Vector2.zero;
+		InputStruct input = new InputStruct(false, 0);
 		if(_inputs.ContainsKey(FrameCounter.currentFrame))
 		{
 			input = _inputs[FrameCounter.currentFrame];

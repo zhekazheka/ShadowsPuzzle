@@ -3,6 +3,8 @@ using System.Collections;
 using UnityEngine.Assertions;
 using System.Collections.Generic;
 
+using InputHistory = System.Collections.Generic.Dictionary<int, InputStruct>;
+
 public class GameMode : MonoBehaviour 
 {
 	[SerializeField]
@@ -33,7 +35,7 @@ public class GameMode : MonoBehaviour
 		_spawnedCharacter = Instantiate(_characterPrefab, _playerStartTran.position, _playerStartTran.rotation) as GameObject;
 
 		_playerController = _spawnedCharacter.GetComponent<PlayerController>();
-		_playerController.onUserAxisInput += _gameState.RegisterUserAxisInput;
+		_playerController.onUserAxisInput += _gameState.RegisterUserInput;
 		_playerController.onFinishPressed += Reborn;
 
 		_characterPawn = _spawnedCharacter.GetComponent<CharacterPawn>();
@@ -42,9 +44,10 @@ public class GameMode : MonoBehaviour
 		_gameState.Init();
 	}
 
+
 	private void Destroy()
 	{
-		_playerController.onUserAxisInput -= _gameState.RegisterUserAxisInput;
+		_playerController.onUserAxisInput -= _gameState.RegisterUserInput;
 		_playerController.onFinishPressed -= Reborn;
 	}
 
@@ -74,7 +77,7 @@ public class GameMode : MonoBehaviour
 		_spawnedCharacter.transform.position = _playerStartTran.position;
 		_spawnedCharacter.transform.rotation = _playerStartTran.rotation;
 
-		List<Dictionary<int, Vector2>> shadownsInput = _gameState.GetRecordedInput();
+		List<InputHistory> shadownsInput = _gameState.GetRecordedInput();
 		int shadowsCount = shadownsInput.Count;
 		int currentUserIndex = _gameState.GetCurrentRecordIndex();
 
@@ -93,7 +96,7 @@ public class GameMode : MonoBehaviour
 		}
 	}
 
-	private GameObject GetShadow(int pIndex, Dictionary<int, Vector2> pInput)
+	private GameObject GetShadow(int pIndex, InputHistory pInput)
 	{
 		GameObject shadow = null;
 		if(pIndex < _spawnedShadows.Count)
