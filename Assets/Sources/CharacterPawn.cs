@@ -10,7 +10,7 @@ public class CharacterPawn : MonoBehaviour
 	[SerializeField]
 	private Animator _anim;            // Reference to the player's animator component.
 	[SerializeField]
-	private Rigidbody _rigidbody;
+	private Rigidbody2D _rigidbody;
 	[SerializeField]
 	private TextMesh _numberText;
 
@@ -54,7 +54,7 @@ public class CharacterPawn : MonoBehaviour
 
 	public void Jump() {
 		if (_rigidbody.velocity.y == 0) {
-			_rigidbody.AddForce (0, _jumpForce, 0, ForceMode.Impulse);
+			_rigidbody.AddForce(new Vector2(0, _jumpForce), ForceMode2D.Impulse);
 		}
 	}
 
