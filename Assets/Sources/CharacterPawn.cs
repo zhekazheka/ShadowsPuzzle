@@ -5,6 +5,7 @@ public class CharacterPawn : MonoBehaviour
 {
 	[SerializeField] private float _maxSpeed = 10f; // The fastest the player can travel in the x axis.
 	[SerializeField] private float _jumpForce = 50f; // The fastest the player can travel in the x axis.
+	[SerializeField] private float _groundColissionRadius = 0.2f; // The fastest the player can travel in the x axis.
 	private bool _facingRight = true;               // For determining which way the player is currently facing.
 
 	[SerializeField]
@@ -13,6 +14,12 @@ public class CharacterPawn : MonoBehaviour
 	private Rigidbody2D _rigidbody;
 	[SerializeField]
 	private TextMesh _numberText;
+
+	[Header("Ground Overlap Detection")]
+	[SerializeField]
+	private Transform _groundTran;
+	[SerializeField]
+	private LayerMask _whatIsGround;
 
 	private Vector3 _currentSpeed;
 
@@ -52,8 +59,10 @@ public class CharacterPawn : MonoBehaviour
 		}
 	}
 
-	public void Jump() {
-		if (_rigidbody.velocity.y == 0) {
+	public void Jump() 
+	{
+		if(Physics2D.OverlapCircle(_groundTran.position, _groundColissionRadius, _whatIsGround))
+		{
 			_rigidbody.AddForce(new Vector2(0, _jumpForce), ForceMode2D.Impulse);
 		}
 	}
